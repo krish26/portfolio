@@ -1,5 +1,20 @@
 (function(){
 
+
+const text = "Krishna Koumudi.";
+const heroText = document.getElementById("heroText");
+let index = 0;
+
+function typeWriter() {
+  if (index < text.length) {
+    heroText.innerHTML += text.charAt(index);
+    index++;
+    setTimeout(typeWriter, 120); // typing speed (ms)
+  }
+}
+
+window.onload = typeWriter;
+
 /* CANVAS DOT GRID */
 var canvas = document.getElementById('heroCanvas');
 var ctx = canvas.getContext('2d');
@@ -7,9 +22,11 @@ var dots = [];
 var mouse = {x:-9999,y:-9999};
 
 function resize(){
-  canvas.width = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
-  buildDots();
+    const hero = document.getElementById('hero');
+
+    canvas.width = hero.offsetWidth;
+    canvas.height = hero.offsetHeight;
+    buildDots();
 }
 function buildDots(){
   dots=[];
