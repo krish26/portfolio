@@ -1,6 +1,3 @@
-(function(){
-
-
 const text = "Krishna Koumudi.";
 const heroText = document.getElementById("heroText");
 let index = 0;
@@ -110,5 +107,3 @@ for(var i=0;i<els.length;i++){
   els[i].style.transitionDelay=(sibs.indexOf(els[i])*0.1)+'s';
   obs.observe(els[i]);
 }
-
-})();
