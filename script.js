@@ -1,61 +1,104 @@
-const text = "Krishna Koumudi.";
-const heroText = document.getElementById("heroText");
-let index = 0;
+document.addEventListener("DOMContentLoaded", () => {
 
-function typeWriter() {
-  if (index < text.length) {
-    heroText.innerHTML += text.charAt(index);
-    index++;
-    setTimeout(typeWriter, 120); // typing speed (ms)
+  /* =========================
+     1. TYPEWRITER EFFECT
+  ========================== */
+  const text = "I am Krishna Koumudi";
+  const heroText = document.getElementById("heroText");
+  let index = 0;
+
+  function typeWriter() {
+    if (index < text.length) {
+      heroText.innerHTML += text.charAt(index);
+      index++;
+      setTimeout(typeWriter, 100);
+    }
+  }
+
+  typeWriter();
+
+
+  /* =========================
+     2. INTERACTIVE DOT GRID
+  ========================== */
+/* INTERACTIVE DOT GRID */
+const canvas = document.getElementById("heroCanvas");
+const ctx = canvas.getContext("2d");
+let dots = [];
+let mouse = { x: -9999, y: -9999 };
+
+function buildDots() {
+  dots = [];
+  const sp = 42;
+  const cols = Math.ceil(canvas.width / sp) + 1;
+  const rows = Math.ceil(canvas.height / sp) + 1;
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      dots.push({ x: c * sp, y: r * sp, ox: c * sp, oy: r * sp, vx: 0, vy: 0 });
+    }
   }
 }
 
-window.onload = typeWriter;
-
-/* CANVAS DOT GRID */
-var canvas = document.getElementById('heroCanvas');
-var ctx = canvas.getContext('2d');
-var dots = [];
-var mouse = {x:-9999,y:-9999};
-
-function resize(){
-    const hero = document.getElementById('hero');
-
-    canvas.width = hero.offsetWidth;
-    canvas.height = hero.offsetHeight;
-    buildDots();
+function resizeCanvas() {
+  const hero = document.getElementById("hero");
+  canvas.width = hero.offsetWidth;
+  canvas.height = hero.offsetHeight;
+  buildDots();
 }
-function buildDots(){
-  dots=[];
-  var sp=42;
-  var cols=Math.ceil(canvas.width/sp)+1;
-  var rows=Math.ceil(canvas.height/sp)+1;
-  for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)
-    dots.push({x:c*sp,y:r*sp,ox:c*sp,oy:r*sp,vx:0,vy:0});
-}
-function drawDots(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  for(var i=0;i<dots.length;i++){
-    var d=dots[i];
-    var dx=mouse.x-d.x, dy=mouse.y-d.y;
-    var dist=Math.sqrt(dx*dx+dy*dy);
-    var force=Math.max(0,80-dist)/80;
-    d.vx+=(-dx*force*0.06)+((d.ox-d.x)*0.08);
-    d.vy+=(-dy*force*0.06)+((d.oy-d.y)*0.08);
-    d.vx*=0.82; d.vy*=0.82;
-    d.x+=d.vx; d.y+=d.vy;
+
+function drawDots() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let i = 0; i < dots.length; i++) {
+    const d = dots[i];
+    const dx = mouse.x - d.x;
+    const dy = mouse.y - d.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const force = Math.max(0, 120 - dist) / 120;
+
+    d.vx += (-dx * force * 0.06) + ((d.ox - d.x) * 0.08);
+    d.vy += (-dy * force * 0.06) + ((d.oy - d.y) * 0.08);
+    d.vx *= 0.82;
+    d.vy *= 0.82;
+    d.x += d.vx;
+    d.y += d.vy;
+
+    d.x += Math.sin(Date.now()/1000 + i) * 0.2;
+    d.y += Math.cos(Date.now()/1200 + i) * 0.2;
+
+    
+
     ctx.beginPath();
-    ctx.arc(d.x,d.y,1+force*2.5,0,Math.PI*2);
-    ctx.fillStyle=force>0.1?'rgba(185,245,66,'+(0.1+force*0.5)+')':'rgba(200,192,168,0.12)';
+    ctx.arc(d.x, d.y, 1.5 + force * 3, 0, Math.PI * 2);
+    ctx.fillStyle = force > 0.05 ? `rgba(185,245,66,${0.2 + force*0.6})` : "rgba(200,192,168,0.12)";
     ctx.fill();
   }
+
   requestAnimationFrame(drawDots);
 }
-canvas.addEventListener('mousemove',function(e){var r=canvas.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top});
-canvas.addEventListener('mouseleave',function(){mouse.x=-9999;mouse.y=-9999});
-window.addEventListener('resize',resize);
-resize();
-drawDots();
+
+/* MOUSE EVENTS */
+canvas.addEventListener("mousemove", e => {
+  const rect = canvas.getBoundingClientRect();
+  mouse.x = e.clientX - rect.left;
+  mouse.y = e.clientY - rect.top;
+});
+canvas.addEventListener("mouseleave", () => {
+  mouse.x = -9999;
+  mouse.y = -9999;
+});
+
+/* INITIALIZE EVERYTHING */
+window.addEventListener("load", () => {
+  typeWriter();
+  resizeCanvas();
+  drawDots();
+});
+
+window.addEventListener("resize", resizeCanvas);
+
+});
 
 /* NAV */
 window.addEventListener('scroll',function(){
